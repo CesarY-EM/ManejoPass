@@ -75,17 +75,15 @@ def enviar_notificacion(nueva_contra):
     except Exception as e:
         print(f"❌ Error al enviar el correo: {e}")
 
-def cambio_contraseña():
-    nueva_clave = generar_password_segura()
+def cambio_contraseña(nuevo_pass):
     client.secrets.update_secret_by_name(
         current_secret_name = "SERVER_ADMIN_PASS",
-        secret_value = nueva_clave,
+        secret_value = nuevo_pass,
         project_id=os.getenv("INFISICAL_PROJECT_ID"),
         environment_slug="dev",
         secret_path="/",
     )
-    return nueva_clave
 
-password_anterior = obtener_password_servidor()
 password_nuevo = generar_password_segura(15)
-enviar_notificacion(cambio_contraseña())
+cambio_contraseña(password_nuevo)
+enviar_notificacion(password_nuevo)
