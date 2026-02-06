@@ -84,6 +84,8 @@ def cambio_contraseña(nuevo_pass):
         secret_path="/",
     )
 
-password_nuevo = generar_password_segura(15)
-cambio_contraseña(password_nuevo)
-enviar_notificacion(password_nuevo)
+
+if __name__ == "__main__":
+    password_nuevo = generar_password_segura(15)
+    cambio_contraseña(password_nuevo)
+    enviar_notificacion(password_nuevo)
