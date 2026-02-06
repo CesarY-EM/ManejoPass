@@ -86,8 +86,6 @@ def cambio_contraseña():
     )
     return nueva_clave
 
-
-
 password_anterior = obtener_password_servidor()
 password_nuevo = generar_password_segura(15)
 enviar_notificacion(cambio_contraseña())
