@@ -1,32 +1,94 @@
 import os
+import smtplib
+import secrets
+import string
+from email.message import EmailMessage
 from dotenv import load_dotenv
-from infisical import *
 from infisical_sdk import infisical_requests, InfisicalSDKClient
+
 load_dotenv("IDs.env")
 
-# 2. Inicializamos el cliente
-# El SDK suele manejar internamente el login con las credenciales que le pases
-client = InfisicalSDKClient(
+client = InfisicalSDKClient(host="https://app.infisical.com")
+client.auth.universal_auth.login(
     client_id=os.getenv("INFISICAL_CLIENT_ID"),
     client_secret=os.getenv("INFISICAL_CLIENT_SECRET")
 )
+print("✅ Autenticación exitosa")
+
+def generar_password_segura(longitud=15):
+    minusculas = string.ascii_lowercase
+    mayusculas = string.ascii_uppercase
+    numeros = string.digits
+    especiales = "!@#$%^&*()-_=+"
+
+    password = [
+        secrets.choice(minusculas),
+        secrets.choice(mayusculas),
+        secrets.choice(numeros),
+        secrets.choice(especiales)
+    ]
+
+    todos_los_caracteres = minusculas + mayusculas + numeros + especiales
+    for _ in range(longitud - len(password)):
+        password.append(secrets.choice(todos_los_caracteres))
+
+    secrets.SystemRandom().shuffle(password)
+
+    return ''.join(password)
 
 def obtener_password_servidor():
     try:
-        # 3. Usamos el cliente para traer el secreto
-        # Nota: Los nombres de los métodos pueden variar levemente según la versión,
-        # pero usualmente es .get_secret() o .secrets.get()
-        secret = client.get_secret(
-            name="SERVER_ADMIN_PASS",
-            project_id=os.getenv("INFISICAL_PROJECT_ID"),
-            environment="dev"
+        secret = client.secrets.get_secret_by_name(
+            secret_name = "SERVER_ADMIN_PASS",
+            project_id = os.getenv("INFISICAL_PROJECT_ID"),
+            environment_slug = "dev",
+            secret_path = "/"
         )
-        return secret.value
+        return secret.secretValue
+
     except Exception as e:
         print(f"Error al obtener secreto: {e}")
         return None
 
-# Prueba de fuego
-password_actual = obtener_password_servidor()
-if password_actual:
-    print("✅ Conexión con Infisical exitosa.")
+def enviar_notificacion(nueva_contra):
+    user = os.getenv("EMAIL_USER")
+    password = os.getenv("EMAIL_PASS")
+    receiver = os.getenv("EMAIL_RECEIVER")
+
+    msg = EmailMessage()
+    msg.set_content(f"""
+        Hola,
+        Se ha realizado una rotación de contraseña exitosa en tus servidores.
+        La nueva contraseña es: {nueva_contra}
+        Este cambio ya ha sido actualizado automáticamente en Infisical.
+        """)
+
+    msg['Subject'] = 'Rotación de Contraseña Exitosa'
+    msg['From'] = user
+    msg['To'] = receiver
+
+    try:
+        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+            smtp.login(user, password)
+            smtp.send_message(msg)
+            print("📧 Correo de notificación enviado correctamente.")
+    except Exception as e:
+        print(f"❌ Error al enviar el correo: {e}")
+
+
+def cambio_contraseña():
+    nueva_clave = generar_password_segura()
+    client.secrets.update_secret_by_name(
+        current_secret_name = "SERVER_ADMIN_PASS",
+        secret_value = nueva_clave,
+        project_id=os.getenv("INFISICAL_PROJECT_ID"),
+        environment_slug="dev",
+        secret_path="/",
+    )
+    return nueva_clave
+
+
+
+password_anterior = obtener_password_servidor()
+password_nuevo = generar_password_segura(15)
+enviar_notificacion(cambio_contraseña())
