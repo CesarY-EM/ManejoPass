@@ -75,7 +75,6 @@ def enviar_notificacion(nueva_contra):
     except Exception as e:
         print(f"❌ Error al enviar el correo: {e}")
 
-
 def cambio_contraseña():
     nueva_clave = generar_password_segura()
     client.secrets.update_secret_by_name(

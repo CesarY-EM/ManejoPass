@@ -1,0 +1,4 @@
+/IDs.env
+.venv/
+venv/
+.idea/
