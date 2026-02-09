@@ -48,7 +48,6 @@ def generar_password(longitud=15):
     secrets.SystemRandom().shuffle(password)
 
     return ''.join(password)
-
 #Metodo para contener la contraseña actual del servidor
 def obtener_password_servidor(server):
     servidor = servidores.get(server)
