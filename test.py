@@ -53,7 +53,7 @@ def obtener_password_servidor(server):
     servidor = servidores.get(server)
     try:
         secret = client.secrets.get_secret_by_name(
-            secret_name = servidor, #Nombre del servidor el cual quremos saber su contraseña
+            secret_name = servidor, #Nombre del servidor el cual queremos saber su contraseña
             project_id = os.getenv("INFISICAL_PROJECT_ID"), # ID del proyecto que se encuentra en infisical
             environment_slug = "dev", #environment donde se creo el proyecto
             secret_path = "/"
@@ -67,7 +67,7 @@ def obtener_password_servidor(server):
 
 #Funcion que se encarga de enviar la notificacion por correo cuando se rote la contraseña
 #El parametro sera la nueva contraseña y el servidor para agregarlos al correo
-def enviar_notificacion(nueva_contra, server):
+def enviar_notificacion(nueva_contra, server, usuario="sistema"):
     servidor = servidores.get(server)
     user = os.getenv("EMAIL_USER") # Usuario que enviara el correo
     password = os.getenv("EMAIL_PASS") # Contraseña de dispositivo, este lo obtenemos en configuracion de tu cuenta de google
@@ -77,7 +77,8 @@ def enviar_notificacion(nueva_contra, server):
     msg.set_content(f"""
         Hola,
         Se ha realizado una rotación de contraseña exitosa en tu servidor de: {servidor}.
-        La nueva contraseña es: {nueva_contra}
+        La nueva contraseña es: {nueva_contra}.
+        La persona que solicito el cambio fue: {usuario}
         Este cambio ya ha sido actualizado automáticamente en Infisical.
         """)
 
@@ -108,4 +109,6 @@ def cambio_contraseña(nuevo_pass, server):
 if __name__ == "__main__":
     #password_nuevo = generar_password(15)
     #cambio_contraseña(password_nuevo, 2)
-    #enviar_notificacion( password_nuevo, 2)
+    #enviar_notificacion("password prueba", 2, "Cesar")
+    #print(obtener_password_servidor(1))
+    print ("Prueba")
