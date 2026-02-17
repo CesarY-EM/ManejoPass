@@ -5,6 +5,7 @@ import test
 import auth
 import streamlit as st
 import logging
+import os
 
 SERVIDORES_CONFIG = {
     "servidor 1": {
@@ -53,14 +54,30 @@ if auth.verificar_login():
 
         if st.session_state.rol == "editor":
             st.markdown("---")
+            log_path = "movimiento.log"
+
+            if st.button("🔄 Sincronizar con Disco"):
+                # Forzamos a Python a soltar cualquier versión vieja del archivo
+                if os.path.exists(log_path):
+                    os.utime(log_path, None)  # Actualiza la fecha del archivo para engañar al sistema
+                st.rerun()
+
             with st.expander("📄 Ver Historial de Auditoría (Logs)"):
                 try:
                     with open("movimientos.log", "r") as f:
                         logs = f.readlines()
-                        for line in logs[-10:]:
-                            st.text(line.strip())
+                        if logs:
+                            for line in reversed(logs[5:]):
+                                if "ERROR" in line:
+                                    st.error(line.strip())
+                                elif "WARNING" in line:
+                                    st.warning(line.strip())
+                                else:
+                                    st.text(line.strip())
                 except FileNotFoundError:
                     st.write("Aún no hay registros de actividad.")
+
+
 
         # VISTA DETALLADA:
     elif st.session_state.mostrar in SERVIDORES_CONFIG:
