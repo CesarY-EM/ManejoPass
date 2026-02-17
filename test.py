@@ -48,6 +48,7 @@ def generar_password(longitud=15):
     secrets.SystemRandom().shuffle(password)
 
     return ''.join(password)
+
 #Metodo para contener la contraseña actual del servidor
 def obtener_password_servidor(server):
     servidor = servidores.get(server)
@@ -67,7 +68,7 @@ def obtener_password_servidor(server):
 
 #Funcion que se encarga de enviar la notificacion por correo cuando se rote la contraseña
 #El parametro sera la nueva contraseña y el servidor para agregarlos al correo
-def enviar_notificacion(nueva_contra, server, usuario="sistema"):
+def enviar_notificacion(nueva_contra, server, usuario):
     servidor = servidores.get(server)
     user = os.getenv("EMAIL_USER") # Usuario que enviara el correo
     password = os.getenv("EMAIL_PASS") # Contraseña de dispositivo, este lo obtenemos en configuracion de tu cuenta de google
@@ -94,7 +95,7 @@ def enviar_notificacion(nueva_contra, server, usuario="sistema"):
         print(f"❌ Error al enviar el correo: {e}")
 
 # Metodo para cambiar la contraseña del servidor
-def cambio_contraseña(nuevo_pass, server):
+def cambio_contraseña(nuevo_pass, server, usuario):
     servidor = servidores.get(server)
     client.secrets.update_secret_by_name(
         current_secret_name = servidor, #Nombre del servidor donde queremos rotar la contraseña
@@ -104,11 +105,10 @@ def cambio_contraseña(nuevo_pass, server):
         secret_path="/",
     )
     print("El password ha sido cambiado correctamente")
-    enviar_notificacion(nuevo_pass, server)
+    enviar_notificacion(nuevo_pass, server, usuario)
 
 if __name__ == "__main__":
     #password_nuevo = generar_password(15)
-    #cambio_contraseña(password_nuevo, 2)
-    #enviar_notificacion("password prueba", 2, "Cesar")
+    #cambio_contraseña(password_nuevo, 2, "Cesar")
     #print(obtener_password_servidor(1))
     print ("Prueba")
