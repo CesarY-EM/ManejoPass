@@ -4,6 +4,7 @@ from streamlit import spinner
 import test
 import auth
 import streamlit as st
+import logging
 
 SERVIDORES_CONFIG = {
     "servidor 1": {
@@ -23,7 +24,7 @@ SERVIDORES_CONFIG = {
     }
 }
 
-st.set_page_config(page_title="Gestor de Credenciales", page_icon="🔐")
+st.set_page_config(page_title="Gestor de Credenciales")
 
 if auth.verificar_login():
     st.sidebar.write(f"Logueado como: **{st.session_state.rol}**")
@@ -32,7 +33,7 @@ if auth.verificar_login():
         st.session_state.autenticado = False
         st.rerun()
 
-    st.title("🛡️ Central de Contraseñas")
+    st.title("Central de Contraseñas")
     st.markdown("---")
 
     if "mostrar" not in st.session_state:
@@ -50,18 +51,32 @@ if auth.verificar_login():
                     st.session_state.mostrar = key
                     st.rerun()
 
+        if st.session_state.rol == "editor":
+            st.markdown("---")
+            with st.expander("📄 Ver Historial de Auditoría (Logs)"):
+                try:
+                    with open("movimientos.log", "r") as f:
+                        logs = f.readlines()
+                        for line in logs[-10:]:
+                            st.text(line.strip())
+                except FileNotFoundError:
+                    st.write("Aún no hay registros de actividad.")
+
         # VISTA DETALLADA:
     elif st.session_state.mostrar in SERVIDORES_CONFIG:
         srv = SERVIDORES_CONFIG[st.session_state.mostrar]
 
         st.subheader(f"Panel de Control: {srv['nombre']}")
 
-        #Lógica de Contraseña
+        #Lógica de Contraseña:
         with st.container(border=True):
             if st.toggle("👁️ Revelar Contraseña", key=f"toggle_{st.session_state.mostrar}"):
+                user = st.session_state.get("usuario_logueado", "Desconocido")
+                srv_name = srv['nombre']
                 try:
                     pwd = test.obtener_password_servidor(srv['id_infisical'])
                     st.code(pwd)
+                    logging.info(f"{user} | Visualizó contraseña | SERVIDOR: {srv_name}")
                 except Exception as e:
                     st.error(f"Error al conectar con la bóveda: {e}")
 
@@ -73,7 +88,14 @@ if auth.verificar_login():
         if st.session_state.rol == "editor":
             st.markdown("---")
             if st.button(f"🔄 Rotar Clave de {srv['nombre']}"):
-                with st.spinner("Ejecutando..."):
-                    nueva = test.generar_password()
-                    test.cambio_contraseña(nueva, srv["id_infisical"],st.session_state.usuario_logueado)
-                    st.success("Proceso completado, se notificara por correo el cambio realizado")
+                user = st.session_state.get("usuario_logueado", "Desconocido")
+                srv_name = srv['nombre']
+                try:
+                    with st.spinner("Ejecutando..."):
+                        nueva = test.generar_password()
+                        test.cambio_contraseña(nueva, srv["id_infisical"],st.session_state.usuario_logueado)
+                        logging.warning(f"{user} | Roto la contraseña   | SERVIDOR: {srv_name}")
+                        st.success("Proceso completado, se notificara por correo el cambio realizado")
+                except Exception as e:
+                    logging.error(f"{user} | ERROR EN ROTACIÓN: {e} | SERVIDOR: {srv_name}")
+                    st.error("Falló en la rotación.")
