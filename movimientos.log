@@ -1,0 +1,55 @@
+2026-02-17 09:58:02 | INFO | Usuario: El usuario admin | ACCIÓN: Visualizó contraseña | SERVIDOR: Servidor 2
+2026-02-17 09:58:55 | INFO | Usuario: admin | ACCIÓN: Visualizó contraseña | SERVIDOR: Servidor 2
+2026-02-17 10:03:53 | INFO | Usuario: admin | Roto la contraseña | SERVIDOR: Servidor 2
+2026-02-17 10:15:26 | WARNING | Usuario: admin | Roto la contraseña   | SERVIDOR: Servidor 2
+2026-02-17 11:30:06 | WARNING | Usuario: admin | LOGIN: FALLIDO (Intento 1/3)
+2026-02-17 11:30:09 | WARNING | Usuario: admin | LOGIN: FALLIDO (Intento 2/3)
+2026-02-17 11:36:48 | WARNING | Usuario: admin | LOGIN: FALLIDO (Intento 3/3)
+2026-02-17 11:36:50 | WARNING | Usuario: admin | LOGIN: BLOQUEADO POR EXCESO DE INTENTOS
+2026-02-17 11:36:53 | WARNING | Usuario: admin | LOGIN: BLOQUEADO POR EXCESO DE INTENTOS
+2026-02-17 11:36:56 | WARNING | Usuario: admin | LOGIN: BLOQUEADO POR EXCESO DE INTENTOS
+2026-02-17 11:37:34 | INFO | Usuario: admin | Ha ingresado al portal
+2026-02-17 11:49:37 | WARNING | Usuario: admin | LOGIN: FALLIDO (Intento 1/3)
+2026-02-17 11:49:41 | INFO | Usuario: admin | Ha ingresado al portal
+2026-02-17 11:52:58 | WARNING | Usuario: admin | LOGIN: FALLIDO (Intento 1/3)
+2026-02-17 11:52:59 | WARNING | Usuario: admin | LOGIN: FALLIDO (Intento 2/3)
+2026-02-17 11:53:00 | WARNING | Usuario: admin | LOGIN: FALLIDO (Intento 3/3)
+2026-02-17 11:53:01 | WARNING | Usuario: admin | LOGIN: BLOQUEADO POR EXCESO DE INTENTOS
+2026-02-17 11:53:03 | WARNING | Usuario: admin | LOGIN: BLOQUEADO POR EXCESO DE INTENTOS
+2026-02-17 11:53:12 | WARNING | Usuario: admin | LOGIN: BLOQUEADO POR EXCESO DE INTENTOS
+2026-02-17 11:53:43 | INFO | Usuario: viewer | Ha ingresado al portal
+2026-02-17 11:53:50 | INFO | Usuario: viewer | Visualizó contraseña | SERVIDOR: Servidor 2
+2026-02-17 11:53:52 | INFO | Usuario: viewer | Visualizó contraseña | SERVIDOR: Servidor 2
+2026-02-17 11:53:58 | INFO | Usuario: admin | Ha ingresado al portal
+2026-02-17 12:03:54 | INFO | Usuario: admin | Ha ingresado al portal
+2026-02-17 12:04:09 | INFO | Usuario: admin | Visualizó contraseña | SERVIDOR: Servidor 2
+2026-02-17 12:06:18 | INFO | Usuario: admin | Ha ingresado al portal
+2026-02-17 12:16:53 | INFO | Usuario: admin | Ha ingresado al portal
+2026-02-17 12:19:46 | INFO | Usuario: admin | Ha ingresado al portal
+2026-02-17 12:21:12 | INFO | Usuario: admin | Ha ingresado al portal
+2026-02-17 12:27:18 | INFO | Usuario: admin | Ha ingresado al portal
+2026-02-17 12:27:28 | INFO | Usuario: admin | Visualizó contraseña | SERVIDOR: Servidor 2
+2026-02-17 12:27:29 | INFO | Usuario: admin | Visualizó contraseña | SERVIDOR: Servidor 2
+2026-02-17 12:27:32 | WARNING | Usuario: admin | Roto la contraseña   | SERVIDOR: Servidor 2
+2026-02-17 12:27:36 | INFO | Usuario: admin | Visualizó contraseña | SERVIDOR: Servidor 2
+2026-02-17 12:27:45 | WARNING | Usuario: admin | LOGIN: FALLIDO (Intento 1/3)
+2026-02-17 12:27:46 | WARNING | Usuario: admin | LOGIN: FALLIDO (Intento 2/3)
+2026-02-17 12:27:49 | INFO | Usuario: admin | Ha ingresado al portal
+2026-02-17 12:28:26 | INFO | Usuario: admin | Ha ingresado al portal
+2026-02-17 12:28:56 | INFO | Usuario: admin | Visualizó contraseña | SERVIDOR: Servidor 2
+2026-02-17 12:28:58 | INFO | Usuario: admin | Visualizó contraseña | SERVIDOR: Servidor 2
+2026-02-17 12:33:10 | INFO | Usuario: admin | Ha ingresado al portal
+2026-02-17 12:34:02 | INFO | Usuario: admin | Visualizó contraseña | SERVIDOR: Servidor 2
+2026-02-17 12:34:05 | INFO | Usuario: admin | Visualizó contraseña | SERVIDOR: Servidor 2
+2026-02-17 12:36:40 | INFO | Usuario: admin | Visualizó contraseña | SERVIDOR: Servidor 2
+2026-02-17 12:36:42 | INFO | Usuario: admin | Visualizó contraseña | SERVIDOR: Servidor 2
+2026-02-19 08:26:26 | WARNING | Usuario: admin | LOGIN: FALLIDO (Intento 1/3)
+2026-02-19 08:26:31 | INFO | Usuario: admin | Ha ingresado al portal
+2026-02-19 08:26:35 | INFO | Usuario: admin | Visualizó contraseña | SERVIDOR: Servidor 2
+2026-02-19 08:26:37 | INFO | Usuario: admin | Visualizó contraseña | SERVIDOR: Servidor 2
+2026-02-19 11:03:14 | INFO | Usuario: admin | Ha ingresado al portal
+2026-02-19 11:03:17 | INFO | Usuario: admin | Visualizó contraseña | SERVIDOR: Servidor 2
+2026-02-19 12:05:22 | INFO | Usuario: admin | Ha ingresado al portal
+2026-02-19 12:05:26 | INFO | Usuario: admin | Visualizó contraseña | SERVIDOR: Servidor 2
+2026-02-19 12:06:13 | INFO | Usuario: viewer | Ha ingresado al portal
+2026-02-19 12:06:22 | INFO | Usuario: viewer | Visualizó contraseña | SERVIDOR: Servidor 2

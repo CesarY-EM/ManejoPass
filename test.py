@@ -2,6 +2,7 @@ import os
 import smtplib
 import secrets
 import string
+import logging
 from email.message import EmailMessage
 from dotenv import load_dotenv
 from infisical_sdk import infisical_requests, InfisicalSDKClient
@@ -18,8 +19,12 @@ client.auth.universal_auth.login(
     client_secret=os.getenv("INFISICAL_CLIENT_SECRET")
 )
 
-#Confirmacion de autentificacion
-print("✅ Autenticación exitosa")
+logging.basicConfig(
+    filename='movimientos.log',
+    level=logging.INFO,
+    format='%(asctime)s | %(levelname)s | Usuario: %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
 
 # Funcion para generar nueva contraseña
 def generar_password(longitud=15):
@@ -64,7 +69,6 @@ def obtener_password_servidor(server):
     except Exception as e:
         print(f"Error al obtener secreto: {e}")
         return None
-
 
 #Funcion que se encarga de enviar la notificacion por correo cuando se rote la contraseña
 #El parametro sera la nueva contraseña y el servidor para agregarlos al correo

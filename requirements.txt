@@ -1,0 +1,4 @@
+dotenv==0.9.9
+infisicalsdk==1.0.16
+streamlit==1.54.0
+urllib3==2.6.3
