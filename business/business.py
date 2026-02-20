@@ -1,9 +1,3 @@
-__author__ = 'Cesar Yair Espinosa Martinez'
-__copyright__ = 'Copyright 2026 UNINET. Todos los derechos Reservados'
-__version__ = '1.0.0'
-__email__ = 'cesaryaem@gmail.com'
-__status__ = 'DEVELOPMENT'
-
 import secrets 
 import streamlit as st
 import logging
@@ -11,8 +5,10 @@ import test
 import os
 from infisical_sdk import infisical_requests, InfisicalSDKClient
 import string
+from datetime import datetime, timedelta
 from dotenv import load_dotenv
 
+TIEMPO_LIMITE = 3
 load_dotenv("IDs.env")
 
 servidores = {1 : "GNS3",
@@ -43,10 +39,20 @@ SERVIDORES_CONFIG = {
     }
 }
 
+def setup_logging():
+    """Configuracion basica de logging"""
+    logging.basicConfig(
+        format='%(asctime)s - %(name)s - %(levelname)s - %(funcName)s - %(message)s',
+        level=logging.INFO
+    )
+
 def generar_password():
     longitud = 15
     """
     Funcion para generar contraseña con un requerimientos estandarizados
+
+    Args:
+        None: No recibe nada
 
     Returns:
         string: nueva contraseña generada 
@@ -108,6 +114,8 @@ def cambio_contraseña(nuevo_pass, server, usuario):
         nuevo_pass (string): nueva contraseña que se pondra en el servidor deseado
         server (int): id del servidor donde se quiere rotar la contraseña
         usuario (string): cadena que nos indica que usuario solicito el cambio de contraseña
+
+    Return: No regresa
     
     """
 
@@ -122,9 +130,13 @@ def cambio_contraseña(nuevo_pass, server, usuario):
     # print("El password ha sido cambiado correctamente")
     # enviar_notificacion(nuevo_pass, server, usuario)
 
+
 def obtener_usuarios():
     """
     Funcion que nos permite obtener los usuarios que se encuentran en unarchivo .env
+
+    Args: 
+        None: No recibe
 
     Returns:
         diccionario_usuario (diccionario): usuario, contraseña y rol de los usuarios encontrados    
@@ -176,6 +188,7 @@ def verificar_login():
                         st.session_state["rol"] = users[usuario_input]["rol"]
                         st.session_state.usuario_logueado = usuario_input
                         st.session_state.intentos = 0  # Reiniciamos
+                        st.session_state["ultimo_movimiento"] = datetime.now()
                         logging.info(f"{usuario_input} | Ha ingresado al portal")
                         st.rerun()
                     else:
@@ -194,11 +207,28 @@ def verificar_login():
         return False
     return True
 
+def sesion_expirada():
+    if "ultimo_movimiento" not in st.session_state:
+        return True
+    
+    tiempo_inactivo = datetime.now() - st.session_state["ultimo_movimiento"]
+    return tiempo_inactivo > timedelta(minutes=TIEMPO_LIMITE)
+
+def cerrar_sesion():
+    st.session_state.clear()
 
 def main():
-    st.set_page_config(page_title="Gestor de Credenciales")
 
+    st.set_page_config(page_title="Gestor de Credenciales")
+    
     if verificar_login():
+
+        if sesion_expirada():
+            cerrar_sesion()
+            st.rerun()
+    
+        st.session_state["ultimo_movimiento"] = datetime.now()
+
         st.sidebar.write(f"Logueado como: **{st.session_state.rol}**")
 
         if st.sidebar.button("Cerrar Sesión"):
@@ -212,6 +242,7 @@ def main():
             st.session_state.mostrar = None
 
         if st.session_state.mostrar is None:
+
             st.subheader("🖥️ Seleccione un Servidor")
 
             cols = st.columns(len(SERVIDORES_CONFIG))
@@ -225,12 +256,12 @@ def main():
 
             if st.session_state.rol == "editor":
                 st.markdown("---")
-                log_path = "movimiento.log"
+                log_path = "movimientos.log"
 
                 if st.button("🔄 Sincronizar con Disco"):
                     # Forzamos a Python a soltar cualquier versión vieja del archivo
                     if os.path.exists(log_path):
-                        os.utime(log_path, None)  # Actualiza la fecha del archivo para engañar al sistema
+                        os.utime(log_path, None)
                     st.rerun()
 
                 with st.expander("📄 Ver Historial de Auditoría (Logs)"):

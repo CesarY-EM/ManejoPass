@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-__author__ = 'Cesar Yair Espinosa Martinez'
-__copyright__ = 'Copyright 2026 UNINET. Todos los derechos Reservados'
-__version__ = '1.0.0'
-__email__ = 'cesaryaem@gmail.com'
-__status__ = 'DEVELOPMENT'
-
 import os
 
 class Constants():
