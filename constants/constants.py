@@ -20,7 +20,7 @@ EMAIL_RECEIVERS = "hunter.cm98@gmail.com,al2212005959@azc.uam.mx"
 
 #Credeciales
 # Formato: USUARIO:PASSWORD:ROL
-USUARIOS = admin:admin123:editor,viewer:view123:lector
+USUARIOS = "admin:admin123:editor,viewer:view123:lector"
 
 SERVIDORES_CONFIG = {
     "GNS3": {

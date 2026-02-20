@@ -19,12 +19,14 @@ client.auth.universal_auth.login(
     client_secret=os.getenv("INFISICAL_CLIENT_SECRET")
 )
 
+""""
 logging.basicConfig(
     filename='movimientos.log',
     level=logging.INFO,
     format='%(asctime)s | %(levelname)s | Usuario: %(message)s',
     datefmt='%Y-%m-%d %H:%M:%S'
 )
+"""
 
 # Funcion para generar nueva contraseña
 def generar_password(longitud=15):
