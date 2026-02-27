@@ -1,8 +1,7 @@
 import secrets 
 import streamlit as st
 import logging
-import test
-import os
+from constants import constants
 from infisical_sdk import infisical_requests, InfisicalSDKClient
 import string
 from datetime import datetime, timedelta
@@ -17,8 +16,8 @@ servidores = {1 : "GNS3",
 # Iniciamos el cliente y le pasamos la credenciales que se encuentrarn en IDs.env
 client = InfisicalSDKClient(host="https://app.infisical.com")
 client.auth.universal_auth.login(
-    client_id=os.getenv("INFISICAL_CLIENT_ID"),
-    client_secret=os.getenv("INFISICAL_CLIENT_SECRET")
+    client_id = constants.Constantes.INFISICAL_CLIENT_ID,
+    client_secret = constants.Constantes.INFISICAL_CLIENT_SECRET
 )
 
 SERVIDORES_CONFIG = {
@@ -36,6 +35,31 @@ SERVIDORES_CONFIG = {
         "nombre": "servidor 3",
         "id_infisical": 3,
         "descripcion": "Perímetro de seguridad"
+    },
+    "servidor 4": {
+        "nombre": "servidor 4",
+        "id_infisical": 4,
+        "descripcion": "descripcion 4"
+    },
+    "servidor 5": {
+        "nombre": "servidor 5",
+        "id_infisical": 5,
+        "descripcion": "descripcion 5"
+    },
+    "servidor 6": {
+        "nombre": "servidor 6",
+        "id_infisical": 6,
+        "descripcion": "descripcion 6"
+    },
+    "servidor 7": {
+        "nombre": "servidor 4",
+        "id_infisical": 4,
+        "descripcion": "descripcion 4 "
+    },
+    "servidor 8": {
+        "nombre": "servidor 4",
+        "id_infisical": 4,
+        "descripcion": "descripcion 4 "
     }
 }
 
@@ -49,7 +73,7 @@ def setup_logging():
 def generar_password():
     longitud = 15
     """
-    Funcion para generar contraseña con un requerimientos estandarizados
+    Funcion para generar contraseña con requerimientos estandarizados
 
     Args:
         None: No recibe nada
@@ -95,7 +119,7 @@ def obtener_password_servidor(server):
     try:
         secret = client.secrets.get_secret_by_name(
             secret_name = servidor,
-            project_id = os.getenv("INFISICAL_PROJECT_ID"),
+            project_id = constants.Constantes.INFISICAL_PROJECT_ID,
             environment_slug = "dev",
             secret_path = "/"
         )
@@ -123,7 +147,7 @@ def cambio_contraseña(nuevo_pass, server, usuario):
     client.secrets.update_secret_by_name(
         current_secret_name = servidor,
         secret_value = nuevo_pass,
-        project_id=os.getenv("INFISICAL_PROJECT_ID"),
+        project_id= constants.Constantes.INFISICAL_PROJECT_ID,
         environment_slug="dev",
         secret_path="/",
     )
@@ -141,7 +165,7 @@ def obtener_usuarios():
     Returns:
         diccionario_usuario (diccionario): usuario, contraseña y rol de los usuarios encontrados    
     """
-    usuarios_str = os.getenv("USUARIOS")
+    usuarios_str = constants.Constantes.USUARIOS
     diccionario_usuarios = {}
 
     if usuarios_str:
@@ -216,105 +240,3 @@ def sesion_expirada():
 
 def cerrar_sesion():
     st.session_state.clear()
-
-def main():
-
-    st.set_page_config(page_title="Gestor de Credenciales")
-    
-    if verificar_login():
-
-        if sesion_expirada():
-            cerrar_sesion()
-            st.rerun()
-    
-        st.session_state["ultimo_movimiento"] = datetime.now()
-
-        st.sidebar.write(f"Logueado como: **{st.session_state.rol}**")
-
-        if st.sidebar.button("Cerrar Sesión"):
-            st.session_state.autenticado = False
-            st.rerun()
-
-        st.title("Central de Contraseñas")
-        st.markdown("---")
-
-        if "mostrar" not in st.session_state:
-            st.session_state.mostrar = None
-
-        if st.session_state.mostrar is None:
-
-            st.subheader("🖥️ Seleccione un Servidor")
-
-            cols = st.columns(len(SERVIDORES_CONFIG))
-
-            for i, (key, info) in enumerate(SERVIDORES_CONFIG.items()):
-                with cols[i]:
-                    st.info(f"{info['nombre']}")
-                    if st.button(f"Gestionar {key.upper()}", key=f"btn_{key}"):
-                        st.session_state.mostrar = key
-                        st.rerun()
-
-            if st.session_state.rol == "editor":
-                st.markdown("---")
-                log_path = "movimientos.log"
-
-                if st.button("🔄 Sincronizar con Disco"):
-                    # Forzamos a Python a soltar cualquier versión vieja del archivo
-                    if os.path.exists(log_path):
-                        os.utime(log_path, None)
-                    st.rerun()
-
-                with st.expander("📄 Ver Historial de Auditoría (Logs)"):
-                    try:
-                        with open("movimientos.log", "r") as f:
-                            logs = f.readlines()
-                            if logs:
-                                for line in reversed(logs[5:]):
-                                    if "ERROR" in line:
-                                        st.error(line.strip())
-                                    elif "WARNING" in line:
-                                        st.warning(line.strip())
-                                    else:
-                                        st.text(line.strip())
-                    except FileNotFoundError:
-                        st.write("Aún no hay registros de actividad.")
-
-
-
-            # VISTA DETALLADA:
-        elif st.session_state.mostrar in SERVIDORES_CONFIG:
-            srv = SERVIDORES_CONFIG[st.session_state.mostrar]
-
-            st.subheader(f"Panel de Control: {srv['nombre']}")
-
-            #Lógica de Contraseña:
-            with st.container(border=True):
-                if st.toggle("👁️ Revelar Contraseña", key=f"toggle_{st.session_state.mostrar}"):
-                    user = st.session_state.get("usuario_logueado", "Desconocido")
-                    srv_name = srv['nombre']
-                    try:
-                        pwd = test.obtener_password_servidor(srv['id_infisical'])
-                        st.code(pwd)
-                        logging.info(f"{user} | Visualizó contraseña | SERVIDOR: {srv_name}")
-                    except Exception as e:
-                        st.error(f"Error al conectar con la bóveda: {e}")
-
-            # Volver
-            if st.button("⬅️ Volver al menú principal"):
-                st.session_state.mostrar = None
-                st.rerun()
-
-            if st.session_state.rol == "editor":
-                st.markdown("---")
-                if st.button(f"🔄 Rotar Clave de {srv['nombre']}"):
-                    user = st.session_state.get("usuario_logueado", "Desconocido")
-                    srv_name = srv['nombre']
-                    try:
-                        with st.spinner("Ejecutando..."):
-                            nueva = test.generar_password()
-                            test.cambio_contraseña(nueva, srv["id_infisical"],st.session_state.usuario_logueado)
-                            logging.warning(f"{user} | Roto la contraseña   | SERVIDOR: {srv_name}")
-                            st.success("Proceso completado, se notificara por correo el cambio realizado")
-                    except Exception as e:
-                        logging.error(f"{user} | ERROR EN ROTACIÓN: {e} | SERVIDOR: {srv_name}")
-                        st.error("Falló en la rotación.")
